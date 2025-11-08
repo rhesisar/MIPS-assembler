@@ -1,11 +1,16 @@
 # MIPS Assembler
 
-Small, self-contained MIPS32 assembler written in C. It reads a subset of MIPS assembly and emits 32-bit machine code (hex), with a clean separation between lexing/parsing, instruction decoding, and encoding.
+Small, self-contained MIPS32 assembler written in C.
+
+Reads a subset of MIPS assembly and emits 32-bit machine code (hex), with a clean separation between lexing/parsing, instruction decoding, and encoding.
 
 ## Summary
 Parses MIPS source: ignores comments/whitespace, tokenizes ops + args, supports $t0/$s1/$ra as well as numeric $0..$31.
+
 Validates & decodes operands: registers, immediates (dec/hex), jump targets; clear error messages on malformed lines/out-of-range fields.
+
 Encodes instructions into 32-bit words across R/I/J formats and writes a .hex file (one word per line).
+
 Includes scaffolding for interactive and step-by-step modes (auto/CLI mode fully implemented).
 
 ### Supported mnemonics (24):
@@ -16,9 +21,11 @@ ADD, ADDI, AND, BEQ, BGTZ, BLEZ, BNE, DIV, J, JAL, JR, LUI, LW, MFHI, MFLO, MULT
 
 ## Usage
 Automatic (assembler) mode:
+
 `./emul-mips <input.s> <output.hex> <final.state>`
 
 Example:
+
 `./emul-mips tests/test.s tests/test.hex tests/test.state`
 
 `output.hex`: assembled machine code (one 8-digit hex word per line)

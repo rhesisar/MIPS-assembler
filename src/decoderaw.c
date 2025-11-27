@@ -1,17 +1,15 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-#include "instfmts.h"
 #include "regs.h"
-#include "struct.h"
+#include "const.h"
 #include "util.h"
 
 static void getopn(Rawinst *rawinst, Inst *inst);
 static void getargs(Rawinst *rawinst, Inst *inst);
-static int immval(char *rawarg, int *immvalp);
 static int regval(char *rawarg, int *regvalp);
-static int targval(char *rawarg, int *targvalp);
 
 /*
  * Returns 0 on success, 1 if op isn't recognized
@@ -47,56 +45,42 @@ getargs(Rawinst *rawinst, Inst *inst)
 {
     int i;
     int r;
+    char *p;
 
     for (i = 0; i < MAX_NUM_ARGS; ++i){
-        switch(instfmts[inst->opn].args[i]) {
+        switch (instfmts[inst->opn].args[i]) {
         case VOID:
             if (rawinst->args[i] != NULL)
                 error("Syntax error in assembly file: Expected %d arguments for instruction %s, found at least %d\n", i, rawinst->op, i + 1);
             inst->args[i] = 0;
             break;
-        case RD:
+        case RD: /* FALLTHROUGH */
         case RS:
         case RT:
-        case SA:
             if ((r = regval(rawinst->args[i], inst->args + i)) == 1)
                 error("Syntax error in assembly file: Expected argument %d of instruction %s, found no argument\n", i + 1, rawinst->op);
             if (r == -1)
                 error("Syntax error in assembly file: Expected register value for argument %d of instruction %s\n", i + 1, rawinst->op);
-            printf("Register value: %d\n", inst->args[i]);
             break;
+        case SA: /* FALLTHROUGH */
         case IMM:
-            if ((r = immval(rawinst->args[i], inst->args + i)) == 1)
-		error("Syntax error in assembly file: Out of bounds immediate value as argument %d of instruction %d\n", i + 1, rawinst->op);
-	    if (r == -1)
-		error("Syntax error in assembly file: Non immediate value as argument %d of instruction %d\n", i + 1, rawinst->op);
-            printf("Immediate value: %d\n", inst->args[i]);
-            break;
         case TARGET:
-            if ((r = targval(rawinst->args[i], inst->args + i)) == 1)
-		error("Syntax error in assembly file: Out of bounds target value as argument %d of instruction %d\n", i + 1, rawinst->op);
-	    if (r == -1)
-		error("Syntax error in assembly file: Non target value as argument %d of instruction %d\n", i + 1, rawinst->op);
-            printf("Target value: %d\n", inst->args[i]);
+            inst->args[i] = (int)strtol(rawinst->args[i], &p, 0);
+            if (*p != '\0')
+                error("Syntax error in assembly file: Invalid argument #%d value of instruction %s\n", i + 1, rawinst->op);
+            if (instfmts[inst->opn].args[i] == TARGET){
+                if (outofbounds(inst->args[i], elmtnbits[instfmts[inst->opn].args[i]], 0))
+                    error("Out of bounds target value of instruction %s\n", rawinst->op);
+            }
+            else{
+                if (outofbounds(inst->args[i], elmtnbits[instfmts[inst->opn].args[i]], 1))
+                    error("Out of bounds immediate or offset value of instruction %s\n", rawinst->op);
+                inst->args[i] = inttonbits(inst->args[i], elmtnbits[instfmts[inst->opn].args[i]]);
+            }
             break;
         }
     }
     return;
-}
-
-static int
-immval(char *rawarg, int *immvalp)
-{
-    long n;
-    char *p;
-
-    n = strtol(rawarg, &p, 0);
-    if (*p != '\0')
-        return -1;
-    if (n < -32768 || n > 32767)
-        return 1;
-    *immvalp = (int)n;
-    return 0;
 }
 
 static int
@@ -110,35 +94,20 @@ regval(char *rawarg, int *regvalp)
         return 1;
     if (isdigit(rawarg[1])){
         *regvalp = (int)strtol(rawarg + 1, NULL, 10);
-        if (*regvalp < 0 || *regvalp >= NUM_REGS)
+        if (*regvalp < 0 || *regvalp >= NUM_GPR)
             return 1;
     }
     else{
         for (i = 0; rawarg[i] != '\0'; ++i){
             rawarg[i] = tolower(rawarg[i]);
         }
-        for (i = 0; i < NUM_REGS && strcmp(rawarg + 1, regs[i].mnem); ++i){
-            ;
+        for (i = 0; i < NUM_GPR; ++i){
+            if (!strcmp(rawarg + 1, regs[i].mnem))
+                break;
         }
-        if (i == NUM_REGS)
+        if (i == NUM_GPR)
             return 1;
         *regvalp = i;
     }
     return 0;
 }
-
-static int
-targval(char *rawarg, int *targvalp)
-{
-    long n;
-    char *p;
-    
-    n = strtol(rawarg, &p, 0);
-    if (*p != '\0')
-        return -1;
-    if (n < 0 || n > 67108863)
-        return 1;
-    *targvalp = (int)n;
-    return 0;
-}
-

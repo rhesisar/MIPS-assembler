@@ -1,41 +1,50 @@
 #ifndef _REGS_H_
 #define _REGS_H_
 
-#include "struct.h"
+#include "const.h"
 
-static Reg regs[NUM_REGS] = {
-{ "zero", 0 },
-{ "at",   0 },
-{ "v0",   0 },
-{ "v1",   0 },
-{ "a0",   0 },
-{ "a1",   0 },
-{ "a2",   0 },
-{ "a3",   0 },
-{ "t0",   0 },
-{ "t1",   0 },
-{ "t2",   0 },
-{ "t3",   0 },
-{ "t4",   0 },
-{ "t5",   0 },
-{ "t6",   0 },
-{ "t7",   0 },
-{ "s0",   0 },
-{ "s1",   0 },
-{ "s2",   0 },
-{ "s3",   0 },
-{ "s4",   0 },
-{ "s5",   0 },
-{ "s6",   0 },
-{ "s7",   0 },
-{ "t8",   0 },
-{ "t9",   0 },
-{ "k0",   0 },
-{ "k1",   0 },
-{ "gp",   0 },
-{ "sp",   0 },
-{ "fp",   0 },
-{ "ra",   0 },
+enum GPR {
+	ZERO,
+    AT,
+	V0,
+	V1,
+	A0,
+	A1,
+	A2,
+	A3,
+	T0,
+	T1,
+	T2,
+	T3,
+	T4,
+	T5,
+	T6,
+	T7,
+	S0,
+	S1,
+	S2,
+	S3,
+	S4,
+	S5,
+	S6,
+	S7,
+	T8,
+	T9,
+	K0,
+	K1,
+	GP,
+	SP,
+	FP,
+	RA,
+    NUM_GPR
 };
+enum SPR {
+	PC = NUM_GPR,
+	HI,
+	LO,
+	NUM_REGS
+};
+
+extern Reg regs[];
 
 #endif

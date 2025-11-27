@@ -1,7 +1,7 @@
-#ifndef _DECODE_H
-#define _DECODE_H
+#ifndef _DECODERAW_H
+#define _DECODERAW_H
 
-#include "struct.h"
+#include "const.h"
 
 void decoderaw(Rawinst *rawinst, Inst *inst);
 

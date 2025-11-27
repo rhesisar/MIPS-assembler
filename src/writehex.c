@@ -1,11 +1,9 @@
 #include <stdio.h>
 
-#include "instfmts.h"
-#include "shifts.h"
-#include "struct.h"
+#include "const.h"
 
 int
-write(Inst *inst, FILE *hexfp)
+writehex(Inst *inst, FILE *hexfp)
 {
     int i, hex;
 

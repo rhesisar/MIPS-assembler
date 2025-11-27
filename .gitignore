@@ -1,0 +1,5 @@
+__pycache__/
+./emul-mips
+tests/*.hex
+tests/*.state
+.DS_Store

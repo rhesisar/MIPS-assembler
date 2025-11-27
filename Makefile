@@ -1,16 +1,8 @@
-# INDIQUEZ ICI: Votre nom et celui de votre binôme
-AUTEURS := GUIGUET_HOLDEN
-
 MAIN := emul-mips
 SRC_C := $(wildcard src/*.c)
 
-# Tapez "make" pour compiler le programme et produire "emul-mips".
-
 $(MAIN): $(SRC_C)
-	gcc $^ -o $@ -Wall -Wextra -O2
-
-# Tapez "make test-cli" pour tester si vous gérez bien le mode automatique de
-# la ligne de commande pour le rendu #1.
+	gcc $^ -o $@ -Wall -Wextra -O2 -lm
 
 CLITMP := /tmp/emul-mips-test
 
@@ -27,21 +19,11 @@ test-cli: $(MAIN)
 	  || echo "error: final state output file does not exist!"; \
 	rm -f $(CLITMP).out1 $(CLITMP).out2
 
-# Tapez "make clean" pour supprimer les fichiers générés par la compilation.
-
 clean:
 	rm -f $(MAIN) src/*~ src/*.swap tests/*~ tests/*.swap
 	rm -rf __pycache__ .pytest_cache tests/*.hex tests/*.state
 
-# Tapez "make tests" pour lancer les tests.
-
 tests: $(MAIN)
 	@ python3 test.py -v
-
-# Tapez "make tar" pour faire une archive du dossier avant chaque rendu.
-
-tar: clean
-	@ dir=$$(basename "$$PWD") && cd .. && tar cvfz $(AUTEURS).tgz  "$$dir"
-	@ echo "==="; echo "Created ../$(AUTEURS).tgz"
 
 .PHONY: test-cli clean tests tar

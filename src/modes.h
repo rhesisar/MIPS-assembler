@@ -1,5 +1,5 @@
-#ifndef _MODES_H
-#define _MODES_H
+#ifndef _MODES_H_
+#define _MODES_H_
 
 int interMode();
 int stepMode(const char *fin);

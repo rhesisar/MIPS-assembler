@@ -6,6 +6,27 @@
 
 #define VOID -1
 
+typedef struct instfmt {
+	int type;
+    char *op;
+    int opval;
+    int args[MAX_NUM_ARGS];
+	void (*exec)(int args[]);
+} Instfmt;
+typedef struct rawinst {
+	char op[MAX_OP_SIZE + 1];
+	char *args[MAX_NUM_ARGS];
+} Rawinst;
+typedef struct inst {
+	int opn;
+	int args[MAX_NUM_ARGS];
+} Inst;
+
+typedef struct reg {
+	char *mnem;
+	int val;
+} Reg;
+
 enum types {
 	RTYPE,
 	ITYPE,
@@ -40,6 +61,7 @@ enum ops {
 	MFHI,
 	MFLO,
 	MULT,
+	NOP,
 	OR,
 	ROTR,
 	SLL,
@@ -50,40 +72,9 @@ enum ops {
 	XOR,
 	NUMBER_OPS
 };
-enum regs {
-	zero,
-    at,
-	v0,
-	v1,
-	a0,
-	a1,
-	a2,
-	a3,
-	t0,
-	t1,
-	t2,
-	t3,
-	t4,
-	t5,
-	t6,
-	t7,
-	s0,
-	s1,
-	s2,
-	s3,
-	s4,
-	s5,
-	s6,
-	s7,
-	t8,
-	t9,
-	k0,
-	k1,
-	gp,
-	sp,
-	fp,
-	ra,
-    NUM_REGS
-};
+
+extern const int elmtnbits[NUM_ELMTS];
+extern const Instfmt instfmts[NUMBER_OPS];
+extern const int shifts[NUM_INST_TYPES][NUM_ELMTS];
 
 #endif

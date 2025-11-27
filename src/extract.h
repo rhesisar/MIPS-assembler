@@ -1,9 +1,9 @@
-#ifndef _EXTRACT_H
-#define _EXTRACT_H
+#ifndef _EXTRACT_H_
+#define _EXTRACT_H_
 
 #include <stdio.h>
 
-#include "struct.h"
+#include "const.h"
 
 int extract(FILE *rfp, Rawinst *rawinst);
 
